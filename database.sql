@@ -1,5 +1,5 @@
 show tables;
-SELECT DATABASE();
+SELECT * FROM users;
 
 CREATE TABLE users (
   user_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -26,18 +26,7 @@ CREATE TABLE users (
   FOREIGN KEY (pinned_user_5_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
-
-CREATE TABLE weekly_totals (
-    weekly_total_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    num_calories INT,
-    total_desired_calories INT,
-    avg_calories INT,
-    percent INT,
-    start_date DATE,
-    end_date DATE,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
+INSERT INTO users (email, hashedPW, first_name, last_name) VALUES ("davidwallace@gmail.com", "password", "david", "wallace");
 
 CREATE TABLE daily_totals (
     daily_total_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -71,3 +60,28 @@ CREATE TABLE entry (
     FOREIGN KEY (daily_total_id) REFERENCES daily_totals(daily_total_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+ALTER TABLE entry
+ADD COLUMN created_at DATETIME;
+
+ALTER TABLE daily_totals
+DROP FOREIGN KEY daily_totals_ibfk_2;
+
+ALTER TABLE daily_totals
+DROP COLUMN weekly_total_id;
+
+ALTER TABLE users
+DROP FOREIGN KEY users_ibfk_6;
+
+Show tables;
+
+drop table weekly_totals;
+
+INSERT INTO daily_totals (user_id, num_calories, desired_calories, percent, curr_date)
+VALUES (1, 0, 2500, 0, '2023-09-09');
+
+select * from daily_totals;
+
+alter table users add column timezone VARCHAR(50);
+
+alter table daily_totals add column timezone VARCHAR(50);

@@ -24,7 +24,7 @@ export const getUser = asyncHandler(async (req, res) => {
     FROM users
     WHERE user_id = ?
     `, [id])
-    console.log("single user get")
+    console.log("single user got")
     res.status(200).json(rows[0])
 })
 
