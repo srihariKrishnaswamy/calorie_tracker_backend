@@ -1,13 +1,17 @@
-import mysql from 'mysql2'
-import dotenv from 'dotenv';
-dotenv.config();
+import express from 'express'
+import cors from 'cors'
+import usersRoutes from './routes/usersRoutes.js'
+const app = express()
 
-const pool = mysql.createPool({
-    host: "127.0.0.1",
-    user: "root",
-    password: "JuiceWrld999",
-    database: 'calorietracker'
-}).promise()
+app.use(express.json())
 
-const response = await pool.query("SELECT * FROM users");
-console.log(response[0])
+app.use('/users', usersRoutes)
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send("Something broke!")
+})
+
+app.listen(8080, () => {
+    console.log("Server is running on port 8080")
+})
