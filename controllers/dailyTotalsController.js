@@ -10,11 +10,17 @@ const pool = mysql.createPool({
     database: 'calorietracker'
 }).promise()
 
-
 export const getAllDailyTotals = asyncHandler(async (req, res) => {
-    const response = await pool.query("SELECT * FROM daily_totals");
-    console.log("all daily_totals get")
-    res.status(200).json(response[0])
+    const {user_id} = req.query
+    const [response] = await pool.query(`
+    SELECT *
+    FROM daily_totals
+    WHERE user_id = ?
+    ORDER BY daily_total_id DESC
+    LIMIT 7;
+    `, [user_id])
+    console.log("past week's daily_totals get")
+    res.status(200).json(response)
 })
 
 export const getTodaysTotal = asyncHandler(async (req, res) => {
@@ -68,7 +74,3 @@ export const deleteTotal = asyncHandler (async (req, res) => {
     console.log("daily total deleted")
     res.status(201).json({message: "total deleted"})
 })
-
-// NEED METHODS FOR
-// UPDATE UPDATETOTAL (handled in the create entry)
-// DELETE TOTAL

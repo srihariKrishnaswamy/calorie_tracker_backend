@@ -12,9 +12,13 @@ const pool = mysql.createPool({
 }).promise()
 
 export const getUsers = asyncHandler(async (req, res) => {
-    const response = await pool.query("SELECT * FROM users");
-    console.log("all users get")
-    res.status(200).json(response[0])
+    const {email} = req.query
+    const response = await pool.query(`SELECT * FROM users WHERE email = ?`, [email]);
+    console.log("user get with email");
+    if (response[0].length === 0) {
+        res.status(404).json({message: "user not found"})
+    }
+    res.status(200).json(response[0][0])
 })
 
 export const getUser = asyncHandler(async (req, res) => {
@@ -35,6 +39,17 @@ export const createUser = asyncHandler (async (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [email, password, first_name, last_name, birth_day, sex, weight, height, target_calories, timezone])
     const id = result.insertId
+
+    const [newTotal] = await pool.query(`
+    INSERT INTO daily_totals (user_id, num_calories, desired_calories, percent, curr_date, timezone)
+    VALUES (?, 0, ?, 0, DATE(NOW()), ?)
+    `, [id, target_calories, timezone])
+    const dt_id = newTotal.insertId
+
+    await pool.query(`
+    UPDATE users SET current_daily_total_id = ? WHERE user_id = ?
+    `, [dt_id, id])
+
     const [rows] = await pool.query(`
     SELECT *
     FROM users

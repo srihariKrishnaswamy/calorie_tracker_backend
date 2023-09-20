@@ -11,15 +11,18 @@ const pool = mysql.createPool({
 }).promise()
 
 export const getTodaysEntries = asyncHandler(async (req, res) => {
-    const { daily_total_id, user_id }= req.query
+    const { user_id }= req.query
+    const [ getDTID ] = await pool.query(`SELECT current_daily_total_id FROM users WHERE user_id = ?`, [user_id])
+    console.log(getDTID)
+    const daily_total_id = getDTID[0]['current_daily_total_id']
+
     const [rows] = await pool.query(`
     SELECT *
     FROM entry
     WHERE daily_total_id = ?
-    AND user_id = ?
-    `, [daily_total_id, user_id])
+    `, [daily_total_id])
     console.log("Today's entries get")
-    res.status(200).json(rows[0])
+    res.status(200).json(rows)
 })
 
 export const createEntry = asyncHandler(async (req, res) => {
@@ -69,6 +72,13 @@ export const createEntry = asyncHandler(async (req, res) => {
 export const updateEntry = asyncHandler (async (req, res) => {
     const {entry_id, food_name, description, num_calories} = req.body;
 
+    const [verifyExists] = await pool.query(` SELECT * FROM entry WHERE entry_id = ?`, [entry_id])
+    if (verifyExists.length === 0) { 
+        console.log("tried to modify nonexistent entry")
+        res.status(400).json({message: "Entry not found"})
+        return
+    }
+
     const [currCals] = await pool.query(`
     SELECT num_calories, daily_total_id FROM entry
     WHERE entry_id = ?
@@ -112,6 +122,13 @@ export const updateEntry = asyncHandler (async (req, res) => {
 export const deleteEntry = asyncHandler (async (req, res) => {
     const {entry_id} = req.body;
 
+    const [verifyExists] = await pool.query(` SELECT * FROM entry WHERE entry_id = ?`, [entry_id])
+    if (verifyExists.length === 0) { 
+        console.log("tried to delete nonexistent entry")
+        res.status(400).json({message: "Entry not found"})
+        return
+    }
+
     const [currCals] = await pool.query(`
     SELECT num_calories, daily_total_id FROM entry
     WHERE entry_id = ?
@@ -127,7 +144,6 @@ export const deleteEntry = asyncHandler (async (req, res) => {
     var desiredCals = oldDailyCals[0]['desired_calories']
     calsNow -= entryCals
     var newPercent = (calsNow / desiredCals) * 100
-
 
     await pool.query(`
     UPDATE daily_totals
