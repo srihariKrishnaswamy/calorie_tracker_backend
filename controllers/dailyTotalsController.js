@@ -29,21 +29,46 @@ export const getTodaysTotal = asyncHandler(async (req, res) => {
 })
 
 export const createTotal = asyncHandler(async (req, res) => {
-    const {user_id, desired_calories, timezone} = req.body
+    const {user_id} = req.body
+    const [getTimezone] = await pool.query(`
+    SELECT timezone
+    FROM users
+    WHERE user_id = ?
+    `, [user_id])
+    var timezone = getTimezone[0]['timezone']
+    const [desiredCals] = await pool.query(`SELECT target_calories FROM users WHERE user_id = ?`, [user_id])
+    var target = desiredCals[0]['target_calories']
     const [result] = await pool.query(`
     INSERT INTO daily_totals (user_id, num_calories, desired_calories, percent, curr_date, timezone)
     VALUES (?, 0, ?, 0, DATE(NOW()), ?)
-    `, [user_id, desired_calories, timezone])
+    `, [user_id, target, timezone])
     const id = result.insertId
     const [rows] = await pool.query(`
     SELECT *
     FROM daily_totals
     WHERE daily_total_id = ?
     `, [id])
-    console.log("new daily_total created")
+    await pool.query(`
+    UPDATE users SET current_daily_total_id = ? WHERE user_id = ?
+    `, [id, user_id])
+    const [updatedUser] = await pool.query(`
+    SELECT * FROM users WHERE user_id = ?
+    `, [user_id])
+    console.log("new daily_total created and user updated")
+    console.log(updatedUser[0])
     res.status(201).json(rows[0])
 })
 
+export const deleteTotal = asyncHandler (async (req, res) => {
+    const {daily_total_id} = req.body;
+    await pool.query(`
+    DELETE FROM daily_totals
+    WHERE daily_total_id = ?
+    `, [daily_total_id])
+    console.log("daily total deleted")
+    res.status(201).json({message: "total deleted"})
+})
+
 // NEED METHODS FOR
-// UPDATE UPDATETOTAL
+// UPDATE UPDATETOTAL (handled in the create entry)
 // DELETE TOTAL

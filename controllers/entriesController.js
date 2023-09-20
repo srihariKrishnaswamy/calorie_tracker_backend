@@ -23,7 +23,17 @@ export const getTodaysEntries = asyncHandler(async (req, res) => {
 })
 
 export const createEntry = asyncHandler(async (req, res) => {
-    const {user_id, food_name, description, num_calories, daily_total_id, timezone} = req.body
+    const {user_id, food_name, description, num_calories} = req.body
+
+    const [gettingDTID] = await pool.query(`
+    SELECT current_daily_total_id, timezone
+    FROM users
+    WHERE user_id = ?
+    `, [user_id])
+
+    var daily_total_id = gettingDTID[0]['current_daily_total_id']
+    var timezone = gettingDTID[0]['timezone']
+
     const [result] = await pool.query(`
     INSERT INTO entry (user_id, food_name, description, num_calories, daily_total_id, created_at, timezone)
     VALUES (?, ?, ?, ?, ?, NOW(), ?)
@@ -34,10 +44,106 @@ export const createEntry = asyncHandler(async (req, res) => {
     FROM entry
     WHERE entry_id = ?
     `, [id])
-    console.log("new entry created")
+    const [calsPerc] = await pool.query(`
+    SELECT num_calories, percent, desired_calories FROM daily_totals
+    WHERE daily_total_id = ?
+    `, [daily_total_id])
+    var cals = calsPerc[0]['num_calories']
+    var percent = calsPerc[0]['percent']
+    var desiredCals = calsPerc[0]['desired_calories']
+    cals += num_calories
+    percent = (cals / desiredCals) * 100
+    await pool.query(`
+    UPDATE daily_totals
+    SET num_calories = ?, percent = ?
+    WHERE user_id = ?
+    `, [cals, percent, user_id])
+    const [updatedTotal] = await pool.query(`
+    SELECT * FROM daily_totals WHERE daily_total_id = ?
+    `, [daily_total_id])
+    console.log("new entry created and daily total updated")
+    console.log(updatedTotal[0])
     res.status(201).json(rows[0])
 })
 
-// NEED METHODS FOR
-// UPDATE UPDATETOTAL
-// DELETE TOTAL
+export const updateEntry = asyncHandler (async (req, res) => {
+    const {entry_id, food_name, description, num_calories} = req.body;
+
+    const [currCals] = await pool.query(`
+    SELECT num_calories, daily_total_id FROM entry
+    WHERE entry_id = ?
+    `, [entry_id])
+    var calsNow = currCals[0]['num_calories']
+    var daily_total_id = currCals[0]['daily_total_id']
+
+    const [calsPerc] = await pool.query(`
+    SELECT num_calories, desired_calories FROM daily_totals
+    WHERE daily_total_id = ?
+    `, [daily_total_id])
+    var cals = calsPerc[0]['num_calories']
+    var desiredCals = calsPerc[0]['desired_calories']
+    cals -= calsNow
+    cals += num_calories
+    var newPercent = (cals / desiredCals) * 100
+    await pool.query(`
+    UPDATE daily_totals
+    SET num_calories = ?, percent = ?
+    `, [cals, newPercent])
+
+    const [updatedTotal] = await pool.query(`
+    SELECT * FROM daily_totals WHERE daily_total_id = ?
+    `, [daily_total_id])
+
+    await pool.query(`
+    UPDATE entry
+    SET food_name = ?, description = ?, num_calories = ?
+    WHERE entry_id = ?
+    `, [food_name, description, num_calories, entry_id])
+    const [rows] = await pool.query(`
+    SELECT *
+    FROM entry
+    WHERE entry_id = ?
+    `, [entry_id])
+    console.log("entry & daily total updated")
+    console.log(updatedTotal[0])
+    res.status(201).json(rows[0])
+})
+
+export const deleteEntry = asyncHandler (async (req, res) => {
+    const {entry_id} = req.body;
+
+    const [currCals] = await pool.query(`
+    SELECT num_calories, daily_total_id FROM entry
+    WHERE entry_id = ?
+    `, [entry_id])
+    var entryCals = currCals[0]['num_calories']
+    var daily_total_id = currCals[0]['daily_total_id']
+
+    const [oldDailyCals] = await pool.query(`
+    SELECT num_calories, desired_calories FROM daily_totals
+    WHERE daily_total_id = ?
+    `, [daily_total_id])
+    var calsNow = oldDailyCals[0]['num_calories']
+    var desiredCals = oldDailyCals[0]['desired_calories']
+    calsNow -= entryCals
+    var newPercent = (calsNow / desiredCals) * 100
+
+
+    await pool.query(`
+    UPDATE daily_totals
+    SET num_calories = ?, percent = ?
+    WHERE daily_total_id = ?
+    `, [calsNow, newPercent, daily_total_id])
+
+    const [updatedTotal] = await pool.query(`
+    SELECT * FROM daily_totals WHERE daily_total_id = ?
+    `, [daily_total_id])
+
+    await pool.query(`
+    DELETE FROM entry
+    WHERE entry_id = ?
+    `, [entry_id])
+    console.log("entry deleted and total updated")
+    console.log(updatedTotal[0])
+    res.status(201).json({message: "entry deleted"})
+})
