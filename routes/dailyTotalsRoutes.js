@@ -1,11 +1,11 @@
 import express from 'express';
-import  {  deleteTotal, getTodaysTotal, getAllDailyTotals, createTotal } from '../controllers/dailyTotalsController.js';
+import  {  deleteTotal, getTodaysTotal, getPastWeekTotals, createTotal } from '../controllers/dailyTotalsController.js';
 
 const router = express.Router();
 
 router.route('/')
     .post(createTotal)
-    .get(getAllDailyTotals)
+    .get(getPastWeekTotals)
     .delete(deleteTotal)
 
 router.route('/:id').get(getTodaysTotal)

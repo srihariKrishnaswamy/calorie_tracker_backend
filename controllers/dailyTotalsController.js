@@ -10,7 +10,7 @@ const pool = mysql.createPool({
     database: 'calorietracker'
 }).promise()
 
-export const getAllDailyTotals = asyncHandler(async (req, res) => {
+export const getPastWeekTotals = asyncHandler(async (req, res) => {
     const {user_id} = req.query
     const [response] = await pool.query(`
     SELECT *
