@@ -66,11 +66,20 @@ export const createTotal = asyncHandler(async (req, res) => {
 })
 
 export const deleteTotal = asyncHandler (async (req, res) => {
-    const {daily_total_id} = req.body;
+    const {user_id} = req.body;
     await pool.query(`
     DELETE FROM daily_totals
-    WHERE daily_total_id = ?
-    `, [daily_total_id])
-    console.log("daily total deleted")
-    res.status(201).json({message: "total deleted"})
+    WHERE user_id = ?
+      AND daily_total_id < (
+        SELECT * FROM (
+          SELECT daily_total_id
+          FROM daily_totals
+          WHERE user_id = ?
+          ORDER BY daily_total_id DESC
+          LIMIT 1 OFFSET 6
+        ) AS subquery
+      )
+    `, [user_id, user_id])
+    console.log("irrelavant daily totals deleted")
+    res.status(201).json({message: "totals deleted"})
 })
