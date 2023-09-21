@@ -1,10 +1,7 @@
-show tables;
-SELECT * FROM users;
-
 CREATE TABLE users (
   user_id INT PRIMARY KEY AUTO_INCREMENT,
   email VARCHAR(40) UNIQUE,
-  hashedPW VARCHAR(40),
+  hashedPW VARCHAR(100),
   first_name VARCHAR(40),
   last_name VARCHAR(40),
   birth_day DATE,
@@ -77,11 +74,28 @@ Show tables;
 
 drop table weekly_totals;
 
-INSERT INTO daily_totals (user_id, num_calories, desired_calories, percent, curr_date)
-VALUES (1, 0, 2500, 0, '2023-09-09');
-
-select * from daily_totals;
+INSERT INTO daily_totals (user_id, num_calories, desired_calories, percent, curr_date, timezone)
+VALUES (2, 0, 2300, 0, '2023-09-09', 'US/Pacific');
 
 alter table users add column timezone VARCHAR(50);
 
 alter table daily_totals add column timezone VARCHAR(50);
+
+alter table entry add column timezone VARCHAR(50);
+
+insert into entry (user_id, food_name, description, num_calories, daily_total_id, created_at, timezone)
+values(1, "alfredo", "cheese alfredo", 400, 1, NOW(), 'US/Pacific');
+
+ALTER TABLE users
+DROP COLUMN hashedPW;
+
+ALTER TABLE users
+ADD COLUMN hashedPW VARCHAR(200);
+
+select * from users;
+
+select * from daily_totals;
+
+select * from entry;
+
+select * from daily_totals where user_id = 14;

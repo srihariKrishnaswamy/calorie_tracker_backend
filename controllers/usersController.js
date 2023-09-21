@@ -34,10 +34,11 @@ export const getUser = asyncHandler(async (req, res) => {
 
 export const createUser = asyncHandler (async (req, res) => {
     const {email, password, first_name, last_name, birth_day, sex, weight, height, target_calories, timezone} = req.body;
+    const hashedPwd = await bcrypt.hash(password, 10); 
     const [result] = await pool.query(`
-    INSERT INTO users (email, hashedPW, first_name, last_name, birth_day, sex, weight, height, target_calories, timezone)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [email, password, first_name, last_name, birth_day, sex, weight, height, target_calories, timezone])
+    INSERT INTO users (email, hashedPW, first_name, last_name, birth_day, sex, weight, height, target_calories, timezone, pinned_user_1_id, pinned_user_2_id, pinned_user_3_id, pinned_user_4_id, pinned_user_5_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [email, hashedPwd, first_name, last_name, birth_day, sex, weight, height, target_calories, timezone, null, null, null, null, null])
     const id = result.insertId
 
     const [newTotal] = await pool.query(`
@@ -60,12 +61,13 @@ export const createUser = asyncHandler (async (req, res) => {
 })
 
 export const updateUser = asyncHandler (async (req, res) => {
-    const {user_id, password, sex, weight, height, target_calories, timezone, current_daily_total_id, pinned_user_1_id, pinned_user_2_id, pinned_user_3_id, pinned_user_4_id, pinned_user_5_id} = req.body;
+    const {user_id, password, sex, weight, height, target_calories, timezone, pinned_user_1_id, pinned_user_2_id, pinned_user_3_id, pinned_user_4_id, pinned_user_5_id} = req.body;
+    const hashedPwd = await bcrypt.hash(password, 10); 
     const [result] = await pool.query(`
     UPDATE users
-    SET hashedPW = ?, sex = ?, weight = ?, height = ?, target_calories = ?, timezone = ?, current_daily_total_id = ?, pinned_user_1_id = ?, pinned_user_2_id = ?, pinned_user_3_id = ?, pinned_user_4_id = ?, pinned_user_5_id = ?
+    SET hashedPW = ?, sex = ?, weight = ?, height = ?, target_calories = ?, timezone = ?, pinned_user_1_id = ?, pinned_user_2_id = ?, pinned_user_3_id = ?, pinned_user_4_id = ?, pinned_user_5_id = ?
     WHERE user_id = ?
-    `, [password, sex, weight, height, target_calories, timezone, current_daily_total_id, pinned_user_1_id, pinned_user_2_id, pinned_user_3_id, pinned_user_4_id, pinned_user_5_id, user_id])
+    `, [hashedPwd, sex, weight, height, target_calories, timezone, pinned_user_1_id, pinned_user_2_id, pinned_user_3_id, pinned_user_4_id, pinned_user_5_id, user_id])
     const [rows] = await pool.query(`
     SELECT *
     FROM users

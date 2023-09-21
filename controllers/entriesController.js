@@ -59,8 +59,8 @@ export const createEntry = asyncHandler(async (req, res) => {
     await pool.query(`
     UPDATE daily_totals
     SET num_calories = ?, percent = ?
-    WHERE user_id = ?
-    `, [cals, percent, user_id])
+    WHERE daily_total_id = ?
+    `, [cals, percent, daily_total_id])
     const [updatedTotal] = await pool.query(`
     SELECT * FROM daily_totals WHERE daily_total_id = ?
     `, [daily_total_id])
@@ -98,7 +98,8 @@ export const updateEntry = asyncHandler (async (req, res) => {
     await pool.query(`
     UPDATE daily_totals
     SET num_calories = ?, percent = ?
-    `, [cals, newPercent])
+    WHERE daily_total_id = ?
+    `, [cals, newPercent, daily_total_id])
 
     const [updatedTotal] = await pool.query(`
     SELECT * FROM daily_totals WHERE daily_total_id = ?
