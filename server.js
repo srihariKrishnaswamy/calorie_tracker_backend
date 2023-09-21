@@ -3,10 +3,17 @@ import cors from 'cors'
 import usersRoutes from './routes/usersRoutes.js'
 import dailyTotalsRoutes from './routes/dailyTotalsRoutes.js'
 import entriesRoutes from './routes/entriesRoutes.js'
+import authRoutes from './routes/authRoutes.js'
+import corsOptions from './config/corsOptions.js'
+import cookieParser from 'cookie-parser'
+
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser()) 
+app.use(cors(corsOptions))
 
+app.use('/auth', authRoutes)
 app.use('/users', usersRoutes)
 app.use('/dailytotals', dailyTotalsRoutes)
 app.use('/entries', entriesRoutes)
