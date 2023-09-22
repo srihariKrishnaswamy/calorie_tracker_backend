@@ -7,7 +7,7 @@ const pool = mysql.createPool({
     host: process.env.HOST,
     user: process.env.DB_USER,
     password: process.env.PASSWORD,
-    database: 'calorietracker'
+    database: process.env.CURRENT_DB
 }).promise()
 
 export const getTodaysEntries = asyncHandler(async (req, res) => {

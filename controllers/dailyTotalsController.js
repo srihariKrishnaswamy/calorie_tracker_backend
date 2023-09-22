@@ -7,7 +7,7 @@ const pool = mysql.createPool({
     host: process.env.HOST,
     user: process.env.DB_USER,
     password: process.env.PASSWORD,
-    database: 'calorietracker'
+    database: process.env.CURRENT_DB
 }).promise()
 
 export const getPastWeekTotals = asyncHandler(async (req, res) => {
@@ -25,6 +25,7 @@ export const getPastWeekTotals = asyncHandler(async (req, res) => {
 
 export const getTodaysTotal = asyncHandler(async (req, res) => {
     const id = req.params.id
+    console.log(id)
     const [rows] = await pool.query(`
     SELECT *
     FROM daily_totals
@@ -61,7 +62,6 @@ export const createTotal = asyncHandler(async (req, res) => {
     SELECT * FROM users WHERE user_id = ?
     `, [user_id])
     console.log("new daily_total created and user updated")
-    console.log(updatedUser[0])
     res.status(201).json(rows[0])
 })
 

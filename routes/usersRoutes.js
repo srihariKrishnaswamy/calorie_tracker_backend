@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.route('/').post(createUser)
 
-router.use(verifyJWT)
+// router.use(verifyJWT)
 
 router.route('/')
     .get(getUsers)

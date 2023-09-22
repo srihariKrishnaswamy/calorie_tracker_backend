@@ -8,7 +8,7 @@ const pool = mysql.createPool({
     host: process.env.HOST,
     user: process.env.DB_USER,
     password: process.env.PASSWORD,
-    database: 'calorietracker'
+    database: process.env.CURRENT_DB
 }).promise()
 
 export const getUsers = asyncHandler(async (req, res) => {
@@ -35,6 +35,13 @@ export const getUser = asyncHandler(async (req, res) => {
 export const createUser = asyncHandler (async (req, res) => {
     const {email, password, first_name, last_name, birth_day, sex, weight, height, target_calories, timezone} = req.body;
     const hashedPwd = await bcrypt.hash(password, 10); 
+
+    const [checkDuplicateEmail] = await pool.query(`
+    SELECT * FROM users WHERE email = ?
+    `, [email])
+
+    if (checkDuplicateEmail.length > 0) return res.status(400).json({message: "Duplicate email"})
+
     const [result] = await pool.query(`
     INSERT INTO users (email, hashedPW, first_name, last_name, birth_day, sex, weight, height, target_calories, timezone, pinned_user_1_id, pinned_user_2_id, pinned_user_3_id, pinned_user_4_id, pinned_user_5_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -62,6 +69,36 @@ export const createUser = asyncHandler (async (req, res) => {
 
 export const updateUser = asyncHandler (async (req, res) => {
     const {user_id, password, sex, weight, height, target_calories, timezone, pinned_user_1_id, pinned_user_2_id, pinned_user_3_id, pinned_user_4_id, pinned_user_5_id} = req.body;
+    if (pinned_user_1_id) {
+        const [pinnedUser1] = await pool.query(`
+        SELECT * FROM users WHERE user_id = ?
+        `, [pinned_user_1_id])
+        if (pinnedUser1.length === 0) return res.status(400).json({message: "Invalid Pinned User 1"})
+    }
+    if (pinned_user_2_id) {
+        const [pinnedUser2] = await pool.query(`
+        SELECT * FROM users WHERE user_id = ?
+        `, [pinned_user_2_id])
+        if (pinnedUser2.length === 0) return res.status(400).json({message: "Invalid Pinned User 2"})
+    }
+    if (pinned_user_3_id) {
+        const [pinnedUser3] = await pool.query(`
+        SELECT * FROM users WHERE user_id = ?
+        `, [pinned_user_3_id])
+        if (pinnedUser3.length === 0) return res.status(400).json({message: "Invalid Pinned User 3"})
+    }
+    if (pinned_user_4_id) {
+        const [pinnedUser4] = await pool.query(`
+        SELECT * FROM users WHERE user_id = ?
+        `, [pinned_user_4_id])
+        if (pinnedUser4.length === 0) return res.status(400).json({message: "Invalid Pinned User 4"})
+    }
+    if (pinned_user_5_id) {
+        const [pinnedUser5] = await pool.query(`
+        SELECT * FROM users WHERE user_id = ?
+        `, [pinned_user_5_id])
+        if (pinnedUser5.length === 0) return res.status(400).json({message: "Invalid Pinned User 5"})
+    }
     const hashedPwd = await bcrypt.hash(password, 10); 
     const [result] = await pool.query(`
     UPDATE users
