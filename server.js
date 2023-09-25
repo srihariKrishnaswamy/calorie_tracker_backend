@@ -6,6 +6,9 @@ import entriesRoutes from './routes/entriesRoutes.js'
 import authRoutes from './routes/authRoutes.js'
 import corsOptions from './config/corsOptions.js'
 import cookieParser from 'cookie-parser'
+import dotenv from 'dotenv'
+
+const PORT = 8080
 
 const app = express()
 
@@ -23,6 +26,6 @@ app.use((err, req, res, next) => {
     res.status(500).send("Something broke!")
 })
 
-app.listen(8080, () => {
-    console.log("Server is running on port 8080")
+app.listen(process.env.PORT || PORT, () => {
+    console.log(`Server is running on port ${process.env.PORT}`)
 })
