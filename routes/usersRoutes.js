@@ -1,5 +1,5 @@
 import express from 'express';
-import  { getAllUsers, updateUser, deleteUser, getUsers, getUser, createUser } from '../controllers/usersController.js';
+import  { updatePinnedUsers, getAllUsers, updateUser, deleteUser, getUsers, getUser, createUser } from '../controllers/usersController.js';
 import verifyJWT from '../middleware/verifyJWT.js'
 
 const router = express.Router();
@@ -14,6 +14,8 @@ router.route('/')
     .get(getUsers)
     .delete(deleteUser)
     .patch(updateUser)
+
+router.route('/pinned').patch(updatePinnedUsers)
 
 router.route('/:id').get(getUser)
 
