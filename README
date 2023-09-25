@@ -1,4 +1,4 @@
-#Here are all the routes in this REST API as well as what they do and how to access them
+# Here are all the routes in this REST API as well as what they do and how to access them
 
 ### Base Production URL: https://caltracker-backend-988509e33b53.herokuapp.com/
 
@@ -11,7 +11,7 @@
     - POST: doesn't need anything, but ideally you'll have a JWT cookie. This route will simply clear that cookie if it exists, which is how you wanna log out in the frontend.
 
 ### User Routes
-- /users/all
+- /users/all 
     - GET: does not need anything. Returns all of the user objects that are stored in the users table in MySQL. This is how you can check the status of that table.
 - /users
     - POST: needs (in req.body): email, password, first_name, last_name, birth_day ('YYYY-MM-DD'), sex, weight, height, target_calories, timezone (specifically formatted). Creates a new user & returns the new created user object. Cannot be duplicate emails in the users table. Also creates a new daily total for the user for the current day.
