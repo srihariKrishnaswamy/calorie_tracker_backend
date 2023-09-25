@@ -31,7 +31,7 @@ export const getUser = asyncHandler(async (req, res) => {
     console.log("single user got")
     res.status(200).json(rows[0])
 })
-
+ 
 export const createUser = asyncHandler (async (req, res) => {
     const {email, password, first_name, last_name, birth_day, sex, weight, height, target_calories, timezone} = req.body;
     const hashedPwd = await bcrypt.hash(password, 10); 
