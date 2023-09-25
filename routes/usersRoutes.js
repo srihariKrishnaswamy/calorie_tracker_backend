@@ -8,6 +8,8 @@ router.route('/').post(createUser)
 
 // router.use(verifyJWT)
 
+router.route('/all/').get(getAllUsers)
+
 router.route('/')
     .get(getUsers)
     .delete(deleteUser)
@@ -15,6 +17,6 @@ router.route('/')
 
 router.route('/:id').get(getUser)
 
-router.route('/all').get(getAllUsers)
+
 
 export default router;
