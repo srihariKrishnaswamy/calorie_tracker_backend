@@ -1,5 +1,5 @@
 import express from 'express';
-import  {  deleteTotal, getTodaysTotal, getPastWeekTotals, createTotal } from '../controllers/dailyTotalsController.js';
+import  {  getAllTotals, deleteTotal, getTodaysTotal, getPastWeekTotals, createTotal } from '../controllers/dailyTotalsController.js';
 import verifyJWT from '../middleware/verifyJWT.js'
 
 const router = express.Router();
@@ -10,5 +10,7 @@ router.route('/')
     .delete(deleteTotal)
 
 router.route('/:id').get(getTodaysTotal)
+
+router.route('/all').get(getAllTotals)
 
 export default router;

@@ -10,6 +10,13 @@ const pool = mysql.createPool({
     database: "heroku_d58c86139c95b3a"
 }).promise()
 
+export const getAllTotals = asyncHandler(async (req, res) => {
+    const [ allTotals ] = await pool.query(`
+    SELECT * FROM daily_totals
+    `)
+    res.status(200).json(allTotals)
+})
+
 export const getPastWeekTotals = asyncHandler(async (req, res) => {
     const {user_id} = req.query
     const [response] = await pool.query(`

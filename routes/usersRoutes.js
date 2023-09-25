@@ -1,5 +1,5 @@
 import express from 'express';
-import  { updateUser, deleteUser, getUsers, getUser, createUser } from '../controllers/usersController.js';
+import  { getAllUsers, updateUser, deleteUser, getUsers, getUser, createUser } from '../controllers/usersController.js';
 import verifyJWT from '../middleware/verifyJWT.js'
 
 const router = express.Router();
@@ -14,5 +14,7 @@ router.route('/')
     .patch(updateUser)
 
 router.route('/:id').get(getUser)
+
+router.route('/all').get(getAllUsers)
 
 export default router;

@@ -11,5 +11,6 @@ router.route('/')
     .patch(updateEntry)
     .delete(deleteEntry)
 
-router.route('/all').get(getAllEntries)
+router.route('/all').get(getAllEntries) // only for development
+
 export default router;
