@@ -1,5 +1,5 @@
 import express from 'express';
-import  { deleteEntry, updateEntry, getTodaysEntries, createEntry } from '../controllers/entriesController.js';
+import  { getAllEntries, deleteEntry, updateEntry, getTodaysEntries, createEntry } from '../controllers/entriesController.js';
 import verifyJWT from '../middleware/verifyJWT.js'
 
 const router = express.Router();
@@ -11,4 +11,5 @@ router.route('/')
     .patch(updateEntry)
     .delete(deleteEntry)
 
+router.route('/all').get(getAllEntries)
 export default router;
