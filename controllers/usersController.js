@@ -20,7 +20,7 @@ export const getUsers = asyncHandler(async (req, res) => {
     }
     res.status(200).json(response[0][0])
 })
-
+ 
 export const getUser = asyncHandler(async (req, res) => {
     const id = req.params.id
     const [rows] = await pool.query(`
