@@ -5,12 +5,16 @@ import mysql from 'mysql2'
 import dotenv from 'dotenv'
 dotenv.config()
 
+const ACCESS_TOKEN_SECRET = "a37328f9ba40d0bb62ded3272703914a3dde55b8b4435e58f4b48fa4946748e2ac3baa4a69141f302940bff4329349a8c8f86dcc7c338fc262584093f584a93f"
+const REFRESH_TOKEN_SECRET = "14cabb8bc60bd5ab48973867466d5120c6f712f609c18d054f872a24ac60424824ae2ca3ff7d37c894d013eb741f349ecd8fc6117c226921c383ea28ed469d64"
+
 const pool = mysql.createPool({
-    host: process.env.HOST,
-    user: process.env.DB_USER,
-    password: process.env.PASSWORD,
-    database: process.env.CURRENT_DB
+    host: "us-cdbr-east-06.cleardb.net",
+    user: "b1d4ddfc60def4",
+    password: "40f84ad4",
+    database: "heroku_d58c86139c95b3a"
 }).promise()
+// mysql://b1d4ddfc60def4:40f84ad4@us-cdbr-east-06.cleardb.net/heroku_d58c86139c95b3a?reconnect=true
 
 // @desc Login
 // @route POST /auth
@@ -35,12 +39,12 @@ const login = asyncHandler(async (req, res) => {
                 "email": email,
             }
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        ACCESS_TOKEN_SECRET,
         { expiresIn: '2h'}
     )
     const refreshToken = jwt.sign(
         {"email": email},
-        process.env.REFRESH_TOKEN_SECRET,
+        REFRESH_TOKEN_SECRET,
         { expiresIn: '1d'}
     )
     res.cookie('jwt', refreshToken, {
@@ -64,7 +68,7 @@ const refresh = asyncHandler(async (req, res) => {
     const refreshToken = cookies.jwt;
     jwt.verify(
         refreshToken,
-        process.env.REFRESH_TOKEN_SECRET,
+        REFRESH_TOKEN_SECRET,
         (err, decoded) => {
             if (err) return res.status(403).json({ message: 'Forbidden' });
             email = decoded.email
@@ -74,7 +78,7 @@ const refresh = asyncHandler(async (req, res) => {
                         email: decoded.email
                     },
                 },
-                process.env.ACCESS_TOKEN_SECRET,
+                ACCESS_TOKEN_SECRET,
                 { expiresIn: '2h' }
             );
         }
