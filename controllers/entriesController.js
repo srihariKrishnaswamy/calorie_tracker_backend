@@ -12,9 +12,9 @@ const pool = mysql.createPool({
 
 export const getAllEntries = asyncHandler(async (req, res) => {
     const [ allEntries ] = await pool.query(`
-    SELECT * FROM entries
+    SELECT * FROM entry
     `)
-    res.status(200).json(allEntries[0])
+    res.status(200).json(allEntries)
 })
 
 export const getTodaysEntries = asyncHandler(async (req, res) => {
