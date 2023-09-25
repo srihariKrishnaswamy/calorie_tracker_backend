@@ -4,6 +4,9 @@ import verifyJWT from '../middleware/verifyJWT.js'
 
 const router = express.Router();
 // router.use(verifyJWT)
+
+router.route('/all').get(getAllTotals)
+
 router.route('/')
     .post(createTotal)
     .get(getPastWeekTotals)
@@ -11,6 +14,5 @@ router.route('/')
 
 router.route('/:id').get(getTodaysTotal)
 
-router.route('/all').get(getAllTotals)
 
 export default router;

@@ -17,5 +17,4 @@ router.route('/')
 
 router.route('/:id').get(getUser)
 
-
 export default router;
