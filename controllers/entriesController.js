@@ -4,11 +4,18 @@ import asyncHandler from 'express-async-handler'
 dotenv.config()
 
 const pool = mysql.createPool({
-    host: process.env.HOST,
-    user: process.env.DB_USER,
-    password: process.env.PASSWORD,
-    database: process.env.CURRENT_DB
+    host: "us-cdbr-east-06.cleardb.net",
+    user: "b1d4ddfc60def4",
+    password: "40f84ad4",
+    database: "heroku_d58c86139c95b3a"
 }).promise()
+
+export const getAllEntries = asyncHandler(async (req, res) => {
+    const [ allEntries ] = await pool.query(`
+    SELECT * FROM entries
+    `)
+    res.status(200).json(allEntries[0])
+})
 
 export const getTodaysEntries = asyncHandler(async (req, res) => {
     const { user_id }= req.query
