@@ -73,7 +73,7 @@ export const createTotal = asyncHandler(async (req, res) => {
 })
 
 export const deleteTotal = asyncHandler (async (req, res) => {
-    const {user_id} = req.body;
+    const {user_id} = req.query;
     await pool.query(`
     DELETE FROM daily_totals
     WHERE user_id = ?
