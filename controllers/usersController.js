@@ -16,15 +16,15 @@ export const getUsersForTimezone = asyncHandler(async (req, res) => {
     const [ allUsers ] = await pool.query(`
     SELECT user_id FROM users WHERE timezone = ?
     `, [timezone])
-    res.status(200).json(allUsers)
+    console.log(allUsers)
+    res.status(200).json(allUsers[0])
 })
 
 export const getAllUsers = asyncHandler(async (req, res) => {
     const [ allUsers ] = await pool.query(`
     SELECT * FROM users
     `)
-    console.log(allUsers)
-    res.status(200).json(allUsers[0])
+    res.status(200).json(allUsers)
 })
 
 export const getUsers = asyncHandler(async (req, res) => {
