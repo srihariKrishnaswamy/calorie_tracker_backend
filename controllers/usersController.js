@@ -23,7 +23,8 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     const [ allUsers ] = await pool.query(`
     SELECT * FROM users
     `)
-    res.status(200).json(allUsers)
+    console.log(allUsers)
+    res.status(200).json(allUsers[0])
 })
 
 export const getUsers = asyncHandler(async (req, res) => {
