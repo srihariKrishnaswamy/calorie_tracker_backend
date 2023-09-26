@@ -3,12 +3,14 @@ import  {  getAllTotals, deleteTotal, getTodaysTotal, getPastWeekTotals, createT
 import verifyJWT from '../middleware/verifyJWT.js'
 
 const router = express.Router();
-// router.use(verifyJWT)
+
+router.route('/').post(createTotal)
 
 router.route('/all').get(getAllTotals)
 
+// router.use(verifyJWT)
+
 router.route('/')
-    .post(createTotal)
     .get(getPastWeekTotals)
     .delete(deleteTotal)
 

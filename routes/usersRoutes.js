@@ -6,11 +6,11 @@ const router = express.Router();
 
 router.route('/').post(createUser)
 
-// router.use(verifyJWT)
+router.route('/timezone').get(getUsersForTimezone)
 
 router.route('/all/').get(getAllUsers)
 
-router.route('/timezone').get(getUsersForTimezone)
+// router.use(verifyJWT)
 
 router.route('/')
     .get(getUsers)
