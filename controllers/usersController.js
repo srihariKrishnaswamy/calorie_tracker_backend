@@ -13,6 +13,7 @@ const pool = mysql.createPool({
 
 export const getUsersForTimezone = asyncHandler(async (req, res) => {
     const {timezone} = req.query;
+    console.log(timezone)
     const [ allUsers ] = await pool.query(`
     SELECT user_id FROM users WHERE timezone = ?
     `, [timezone])
