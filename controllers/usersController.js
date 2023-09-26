@@ -18,7 +18,7 @@ export const getUsersForTimezone = asyncHandler(async (req, res) => {
     SELECT user_id FROM users WHERE timezone = ?
     `, [timezone])
     console.log(allUsers)
-    res.status(200).json(allUsers[0])
+    res.status(200).json(allUsers)
 })
 
 export const getAllUsers = asyncHandler(async (req, res) => {
