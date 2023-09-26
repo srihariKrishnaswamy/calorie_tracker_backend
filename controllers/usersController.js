@@ -11,6 +11,14 @@ const pool = mysql.createPool({
     database: "heroku_d58c86139c95b3a"
 }).promise()
 
+export const getUsersForTimezone = asyncHandler(async (req, res) => {
+    const {timezone} = req.query;
+    const [ allUsers ] = await pool.query(`
+    SELECT user_id FROM users WHERE timezone = ?
+    `, [timezone])
+    res.status(200).json(allUsers)
+})
+
 export const getAllUsers = asyncHandler(async (req, res) => {
     const [ allUsers ] = await pool.query(`
     SELECT * FROM users
