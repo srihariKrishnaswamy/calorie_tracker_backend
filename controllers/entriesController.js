@@ -34,7 +34,6 @@ export const getTodaysEntries = asyncHandler(async (req, res) => {
 
 export const createEntry = asyncHandler(async (req, res) => {
     const {user_id, food_name, description, num_calories} = req.body
-
     const [gettingDTID] = await pool.query(`
     SELECT current_daily_total_id, timezone
     FROM users
@@ -52,8 +51,8 @@ export const createEntry = asyncHandler(async (req, res) => {
     const [rows] = await pool.query(`
     SELECT *
     FROM entry
-    WHERE entry_id = ?
-    `, [id])
+    WHERE daily_total_id = ?
+    `, [daily_total_id])
     const [calsPerc] = await pool.query(`
     SELECT num_calories, percent, desired_calories FROM daily_totals
     WHERE daily_total_id = ?
@@ -73,7 +72,7 @@ export const createEntry = asyncHandler(async (req, res) => {
     `, [daily_total_id])
     console.log("new entry created and daily total updated")
     console.log(updatedTotal[0])
-    res.status(201).json(rows[0])
+    res.status(201).json(rows)
 })
 
 export const updateEntry = asyncHandler (async (req, res) => {
