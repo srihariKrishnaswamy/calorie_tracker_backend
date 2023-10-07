@@ -33,7 +33,8 @@ export const getTodaysEntries = asyncHandler(async (req, res) => {
 })
 
 export const createEntry = asyncHandler(async (req, res) => {
-    const {user_id, food_name, description, num_calories} = req.body
+    var {user_id, food_name, description, num_calories} = req.body
+    num_calories = parseInt(num_calories)
     const [gettingDTID] = await pool.query(`
     SELECT current_daily_total_id, timezone
     FROM users
