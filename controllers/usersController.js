@@ -85,7 +85,29 @@ export const createUser = asyncHandler (async (req, res) => {
 })
 
 export const updateUser = asyncHandler (async (req, res) => {
-    const {user_id, password, sex, weight, height, target_calories, timezone} = req.body;
+    const {user_id, sex, weight, height, target_calories, timezone} = req.body;
+
+    const [currUser] = await pool.query(`
+    SELECT * FROM users WHERE user_id = ?
+    `, [user_id])
+    if (currUser.length === 0) return res.status(400).json({message: "nonexistent user"})
+
+    const [result] = await pool.query(`
+    UPDATE users
+    SET sex = ?, weight = ?, height = ?, target_calories = ?, timezone = ?
+    WHERE user_id = ?
+    `, [sex, weight, height, target_calories, timezone, user_id])
+    const [rows] = await pool.query(`
+    SELECT *
+    FROM users
+    WHERE user_id = ?
+    `, [user_id])
+    console.log("user updated")
+    res.status(201).json(rows[0])
+})
+
+export const updatePassword = asyncHandler (async (req, res) => {
+    const {user_id, password} = req.body;
 
     const [currUser] = await pool.query(`
     SELECT * FROM users WHERE user_id = ?
@@ -95,9 +117,9 @@ export const updateUser = asyncHandler (async (req, res) => {
     const hashedPwd = await bcrypt.hash(password, 10); 
     const [result] = await pool.query(`
     UPDATE users
-    SET hashedPW = ?, sex = ?, weight = ?, height = ?, target_calories = ?, timezone = ?
+    SET hashedPW = ?, 
     WHERE user_id = ?
-    `, [hashedPwd, sex, weight, height, target_calories, timezone, user_id])
+    `, [hashedPwd, user_id])
     const [rows] = await pool.query(`
     SELECT *
     FROM users
