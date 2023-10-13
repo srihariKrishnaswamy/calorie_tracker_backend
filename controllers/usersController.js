@@ -85,7 +85,7 @@ export const createUser = asyncHandler (async (req, res) => {
 })
 
 export const updateUser = asyncHandler (async (req, res) => {
-    const {user_id, sex, weight, height, target_calories, timezone} = req.body;
+    const {user_id, sex, weight, target_calories, timezone} = req.body;
 
     const [currUser] = await pool.query(`
     SELECT * FROM users WHERE user_id = ?
@@ -94,9 +94,9 @@ export const updateUser = asyncHandler (async (req, res) => {
 
     const [result] = await pool.query(`
     UPDATE users
-    SET sex = ?, weight = ?, height = ?, target_calories = ?, timezone = ?
+    SET sex = ?, weight = ?, target_calories = ?, timezone = ?
     WHERE user_id = ?
-    `, [sex, weight, height, target_calories, timezone, user_id])
+    `, [sex, weight, target_calories, timezone, user_id])
     const [rows] = await pool.query(`
     SELECT *
     FROM users
