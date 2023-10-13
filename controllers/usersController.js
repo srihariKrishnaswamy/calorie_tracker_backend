@@ -94,7 +94,7 @@ export const updateUser = asyncHandler (async (req, res) => {
 
     const [result] = await pool.query(`
     UPDATE users
-    SET sex = ?, weight = ?, target_calories = ?,
+    SET sex = ?, weight = ?, target_calories = ?
     WHERE user_id = ?
     `, [sex, weight, target_calories, user_id])
     const [rows] = await pool.query(`
@@ -117,7 +117,7 @@ export const updatePassword = asyncHandler (async (req, res) => {
     const hashedPwd = await bcrypt.hash(password, 10); 
     const [result] = await pool.query(`
     UPDATE users
-    SET hashedPW = ?, 
+    SET hashedPW = ?
     WHERE user_id = ?
     `, [hashedPwd, user_id])
     const [rows] = await pool.query(`
