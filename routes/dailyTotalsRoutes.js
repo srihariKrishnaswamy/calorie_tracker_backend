@@ -10,7 +10,7 @@ router.route('/')
 
 router.route('/all').get(getAllTotals)
 
-// router.use(verifyJWT)
+router.use(verifyJWT)
 
 router.route('/')
     .get(getPastWeekTotals)

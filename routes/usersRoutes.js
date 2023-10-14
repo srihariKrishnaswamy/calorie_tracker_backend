@@ -10,7 +10,7 @@ router.route('/timezone').get(getUsersForTimezone)
 
 router.route('/all/').get(getAllUsers)
 
-// router.use(verifyJWT)
+router.use(verifyJWT)
 
 router.route('/')
     .get(getUsers)
