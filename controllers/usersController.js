@@ -187,4 +187,4 @@ export const deleteUser = asyncHandler (async (req, res) => {
     `, [user_id])
     console.log("user deleted")
     res.status(201).json({message: "user deleted"})
-})
+}) 
