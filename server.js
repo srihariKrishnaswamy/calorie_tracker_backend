@@ -11,7 +11,7 @@ import dotenv from 'dotenv'
 const PORT = 8080
 
 const app = express()
-
+app.set('trust proxy', true); // for dev
 app.use(express.json())
 app.use(cookieParser()) 
 app.use(cors(corsOptions))
